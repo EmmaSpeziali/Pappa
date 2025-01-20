@@ -1,27 +1,35 @@
+package producerconsumer;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 
 public class Piatto {
-    private final Queue<String> piatto = new LinkedList<>();
-    private final int CAPACITÀ_MAX = 10;
+    private final ArrayList<String> listaBocconi;
+    private final int maxSize;
 
+    public Piatto(int maxSize) {
+        this.listaBocconi = new ArrayList<>();
+        this.maxSize = maxSize;
+    }
+//questo agg boccone
     public synchronized void aggiungiBoccone(String boccone) throws InterruptedException {
-        while (piatto.size() == CAPACITÀ_MAX) {
+        while (listaBocconi.size() >= maxSize) {
+            System.out.println("Piatto pieno. Il papà attende.");
             wait();
         }
-        piatto.add(boccone);
+        listaBocconi.add(boccone);
         System.out.println("Papà ha preparato: " + boccone);
-        notifyAll();
+        notifyAll(); 
     }
 
+    // toglie boccone
     public synchronized String rimuoviBoccone() throws InterruptedException {
-        while (piatto.isEmpty()) {
+        while (listaBocconi.isEmpty()) {
+            System.out.println("Piatto vuoto. Il bebè attende.");
             wait();
         }
-        String boccone = piatto.poll();
+        String boccone = listaBocconi.remove(0); 
         System.out.println("Bebè ha mangiato: " + boccone);
-        notifyAll();
+        notifyAll(); 
         return boccone;
-}
+    }
 }
